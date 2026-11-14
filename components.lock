@@ -37,7 +37,7 @@ rev = "293f269fa9321bf0da784cd88c990da4f38edf38"
 repo = "git@github.com:leopard-project/leopard-getty.git"
 path = "../leopard-getty"
 tag = ""
-rev = "1f0b47d258ec01e1d80b13625beda4600ce3129a"
+rev = "bd66c9e625fff7c2bc70ace47c23521dc3845d00"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
