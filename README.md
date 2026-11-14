@@ -20,10 +20,62 @@ LeopardOS 源包/仓库层，参考 Void 的 `void-packages` 模型。
 ./leopard-src sync
 ./leopard-src list
 ./leopard-src repo
+./leopard-src bundle          # 打一个可手动分发的本地仓库包
 ./leopard-src lock
 ./leopard-src verify          # 开发检查：untagged 只警告
 ./leopard-src verify --release # 发版检查：untagged 直接失败
 ```
+
+## 即时通信软件手动分发
+
+没有远程仓库服务器时，用 `bundle` 把本地仓库打成单个压缩包：
+
+```sh
+./leopard-src bundle
+# → hostdir/leopard-repo-YYYYMMDD.tar.gz
+# → 同时打印 size 和 sha256
+```
+
+包内包含：
+
+```
+*.xbps
+x86_64-repodata
+SHA256SUMS
+README.txt
+media.list
+components.lock
+```
+
+发送时把 `.tar.gz` 和命令行打印的 sha256 一起发给对方。对方收到后：
+
+```sh
+sha256sum leopard-repo-YYYYMMDD.tar.gz
+mkdir -p /system/repo
+tar -xzf leopard-repo-YYYYMMDD.tar.gz -C /system/repo
+mkdir -p /config/xbps.d
+echo 'repository=/system/repo' > /config/xbps.d/repo.conf
+xbps-install -S
+xbps-install <package>
+```
+
+如果聊天软件限制文件大小：
+
+```sh
+BUNDLE_SPLIT_MB=8 ./leopard-src bundle
+# → leopard-repo-YYYYMMDD.tar.gz.part-00, .part-01, ...
+# → 附带 *.parts.sha256
+```
+
+对方合并：
+
+```sh
+cat leopard-repo-YYYYMMDD.tar.gz.part-* > leopard-repo.tar.gz
+```
+
+注意：手动分发的包默认未签名；聊天软件传输不可信，至少要让对方核对
+`SHA256SUMS`。正式一点就先配置 `LEOPARD_SIGN_KEY`，让 `bundle` 调用
+`xbps-rindex` 签名，再把公钥一起发给对方。
 
 ## tag + rev
 

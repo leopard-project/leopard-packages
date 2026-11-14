@@ -160,6 +160,76 @@ cmd_repo() {
         echo "repository index: $BINPKGS/x86_64-repodata"
 }
 
+cmd_bundle() {
+        out="${1:-$HOSTDIR/leopard-repo-$(date +%Y%m%d).tar.gz}"
+        case "$out" in
+                /*) ;;
+                *) out="$(pwd)/$out" ;;
+        esac
+
+        command -v tar >/dev/null 2>&1 || die "tar is required for bundle"
+        command -v sha256sum >/dev/null 2>&1 || die "sha256sum is required for bundle"
+
+        [ -d "$BINPKGS" ] || cmd_sync
+        cmd_repo
+
+        stage="$HOSTDIR/bundle"
+        rm -rf "$stage"
+        mkdir -p "$stage"
+
+        cp "$BINPKGS"/*.xbps "$BINPKGS/x86_64-repodata" "$stage/"
+        cp "$MEDIA_LIST" "$stage/media.list"
+        cp "$LOCKFILE" "$stage/components.lock"
+
+        (
+                cd "$stage"
+                sha256sum *.xbps x86_64-repodata > SHA256SUMS
+        )
+
+        cat > "$stage/README.txt" <<'EOF'
+LeopardOS local package repository bundle
+
+This directory is a local xbps repository: *.xbps + x86_64-repodata.
+
+Install on a LeopardOS target:
+
+  1. Extract this bundle to /system/repo:
+       mkdir -p /system/repo
+       tar -xzf <bundle>.tar.gz -C /system/repo
+
+  2. Point xbps at it:
+       mkdir -p /config/xbps.d
+       echo 'repository=/system/repo' > /config/xbps.d/repo.conf
+
+  3. Use it:
+       xbps-install -S
+       xbps-install <package>
+
+Verify the transfer first:
+       sha256sum -c SHA256SUMS
+
+This repository is unsigned unless the sender signed it. Treat files received
+through chat as untrusted until the checksums (and signatures, if present)
+match.
+EOF
+
+        tar -C "$stage" -czf "$out" .
+        rm -rf "$stage"
+
+        echo "bundle: $out"
+        echo "size:   $(du -h "$out" | awk '{print $1}')"
+        echo "sha256: $(sha256sum "$out" | awk '{print $1}')"
+
+        if [ -n "${BUNDLE_SPLIT_MB:-}" ]; then
+                command -v split >/dev/null 2>&1 || die "split is required for BUNDLE_SPLIT_MB"
+                split -b "${BUNDLE_SPLIT_MB}M" -d -a 2 "$out" "$out.part-"
+                rm -f "$out"
+                sha256sum "$out".part-* > "$out.parts.sha256"
+                echo "split:  $out.part-* (${BUNDLE_SPLIT_MB} MiB each)"
+                echo "hashes: $out.parts.sha256"
+        fi
+}
+
 cmd_list() {
         media_packages
 }
@@ -310,10 +380,11 @@ case "${1:-}" in
         sync)   cmd_sync ;;
         repo)   cmd_repo ;;
         list)   cmd_list ;;
+        bundle) shift; cmd_bundle "$@" ;;
         lock)   shift; cmd_lock "$@" ;;
         verify) shift; cmd_verify "$@" ;;
         clean)  cmd_clean ;;
         *)
-                die "usage: $0 sync|repo|list|lock [--update]|verify [--release]|clean"
+                die "usage: $0 sync|repo|list|bundle [out]|lock [--update]|verify [--release]|clean"
                 ;;
 esac
