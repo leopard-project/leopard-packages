@@ -1,56 +1,82 @@
-# LeopardOS release lock: component repositories and the commits a release uses.
-# `leopard-src sync` currently reads component out/ directories; this file is
-# the intended source of truth once fetch/build is wired.
+# LeopardOS release lock: component repositories and the
+# exact commits a release uses.  tag is human-readable; rev is
+# authoritative.  Refresh with: ./leopard-src lock --update
 #
 # Format:
 #   [component]
 #   repo = "git@github.com:leopard-project/<name>.git"
+#   path = "../<name>"
+#   tag  = "<exact tag, empty if untagged>"
 #   rev  = "<commit>"
 
 [OpenXSBoot]
 repo = "git@github.com:leopard-project/OpenXSBoot.git"
-rev  = "2665e0d"
+path = "../OpenXSBoot"
+tag = ""
+rev = "2665e0d982b761e59f6f00707ad6e29708885d98"
 
 [OpenXSKernel]
 repo = "git@github.com:leopard-project/OpenXSKernel.git"
-rev  = "7a190ce"
+path = "../OpenXSKernel"
+tag = ""
+rev = "7a190ce2a452ab0164fd7a05e57a3b6bef7f026f"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
-rev  = "540f452"
+path = "../leopard-base"
+tag = ""
+rev = "540f452dd4173d8a95031b6ca21d5cbc558f1afb"
 
 [leopard-rc]
 repo = "git@github.com:leopard-project/leopard-rc.git"
-rev  = "293f269"
+path = "../leopard-rc"
+tag = ""
+rev = "293f269fa9321bf0da784cd88c990da4f38edf38"
 
 [leopard-getty]
 repo = "git@github.com:leopard-project/leopard-getty.git"
-rev  = "fabb199"
+path = "../leopard-getty"
+tag = ""
+rev = "fabb1998c7f1a66bb2eb32d9deb70e14ba213412"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
-rev  = "20b8d12"
+path = "../leopard-oobe"
+tag = ""
+rev = "20b8d123c87e1fa9d4837ef86ca0d90bace7c136"
 
 [leopard-shell]
 repo = "git@github.com:leopard-project/leopard-shell.git"
-rev  = "6daa23c"
+path = "../leopard-shell"
+tag = ""
+rev = "6daa23c542606f4e0f08c5b70068b558ac7c7dcc"
 
 [leopard-mountd]
 repo = "git@github.com:leopard-project/leopard-mountd.git"
-rev  = "53d4527"
+path = "../leopard-mountd"
+tag = ""
+rev = "53d45274d05348a32ba38cc24f48d57f8c981ffc"
 
 [leopard-utils]
 repo = "git@github.com:leopard-project/leopard-utils.git"
-rev  = "9da9c26"
+path = "../leopard-utils"
+tag = ""
+rev = "9da9c26e750459f819c6add296a21155d54ecc91"
 
 [leopard-coreutils]
 repo = "git@github.com:leopard-project/leopard-coreutils.git"
-rev  = "a084763"
+path = "../leopard-coreutils"
+tag = ""
+rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 
 [leopard-installer]
 repo = "git@github.com:leopard-project/leopard-installer.git"
-rev  = "4ab65d6"
+path = "../leopard-installer"
+tag = ""
+rev = "4ab65d65f389f983c5ddb790a355bc7a53ed2f60"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
-rev  = "6bb39cc"
+path = "../leopard-xbps"
+tag = "v0.60.7"
+rev = "6bb39cc9adea7f645981066deab0c7a2cd05d88c"

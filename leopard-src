@@ -1,14 +1,17 @@
 #!/bin/sh
 # leopard-src — LeopardOS source-package/repository helper.
 #
-# Transitional model (until srcpkgs/<name>/template builds are wired):
-#   sync   rebuild hostdir/binpkgs from explicit component outputs
-#   repo   regenerate/clean the xbps repository index
-#   list   show media.list packages
-#   clean  remove hostdir
+# Commands:
+#   sync             rebuild hostdir/binpkgs from explicit component outputs
+#   repo             regenerate/clean the xbps repository index
+#   list             show media.list packages
+#   lock [--update]  show or refresh components.lock (tag + rev)
+#   verify [--release]
+#                    check lock/tag/rev consistency and media repo contents
+#   clean            remove hostdir
 #
-# The important invariant: /media is built only from media.list, never by
-# scanning every sibling repository's out/ directory.
+# The invariant: /media is built only from media.list, never by scanning
+# every sibling repository's out/ directory.
 set -eu
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
@@ -17,6 +20,7 @@ HOSTDIR="${LEOPARD_HOSTDIR:-$ROOT/hostdir}"
 BINPKGS="$HOSTDIR/binpkgs"
 MEDIA_LIST="$ROOT/media.list"
 SOURCES="$ROOT/sources.conf"
+LOCKFILE="$ROOT/components.lock"
 RINDEX="${XBPS_RINDEX:-$PROJ/leopard-xbps/out/xbps-rindex}"
 
 die() {
@@ -24,21 +28,85 @@ die() {
         exit 1
 }
 
-source_dir() {
+warn() {
+        echo "leopard-src: WARNING: $*" >&2
+}
+
+# ---- lock helpers ---------------------------------------------------------
+
+lock_components() {
+        awk '
+                /^[[:space:]]*#/ { next }
+                /^[[:space:]]*\[/ {
+                        line = $0
+                        gsub(/^[[:space:]]*\[/, "", line)
+                        gsub(/\][[:space:]]*$/, "", line)
+                        print line
+                }
+        ' "$LOCKFILE"
+}
+
+lock_get() {
+        comp=$1
+        key=$2
+        awk -v want="$comp" -v key="$key" '
+                /^[[:space:]]*#/ { next }
+                /^[[:space:]]*\[/ {
+                        line = $0
+                        gsub(/^[[:space:]]*\[/, "", line)
+                        gsub(/\][[:space:]]*$/, "", line)
+                        section = line
+                        next
+                }
+                section == want {
+                        eq = index($0, "=")
+                        if (eq == 0) next
+                        k = substr($0, 1, eq - 1)
+                        v = substr($0, eq + 1)
+                        gsub(/^[[:space:]]+|[[:space:]]+$/, "", k)
+                        gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+                        gsub(/^"|"$/, "", v)
+                        if (k == key) { print v; exit }
+                }
+        ' "$LOCKFILE"
+}
+
+lock_path() {
+        comp=$1
+        path=$(lock_get "$comp" path)
+        [ -n "$path" ] || path="../$comp"
+        echo "$ROOT/$path"
+}
+
+# ---- package source helpers ----------------------------------------------
+
+pkg_source_dir() {
         pkg=$1
         dir=$(awk -v p="$pkg" '$1 == p { print $2; exit }' "$SOURCES")
+        [ -n "$dir" ] && echo "$PROJ/$dir"
+}
+
+source_dir() {
+        pkg=$1
+        dir=$(pkg_source_dir "$pkg")
         [ -n "$dir" ] || die "no sources.conf entry for $pkg"
-        echo "$PROJ/$dir"
+        echo "$dir"
 }
 
 media_packages() {
         sed -e 's/#.*$//' -e 's/[[:space:]]*$//' "$MEDIA_LIST" | grep -v '^$' || true
 }
 
+# ---- commands ------------------------------------------------------------
+
 cmd_sync() {
         [ -x "$RINDEX" ] || die "missing xbps-rindex: $RINDEX"
         [ -f "$MEDIA_LIST" ] || die "missing media.list"
         [ -f "$SOURCES" ] || die "missing sources.conf"
+
+        if [ "${LEOPARD_VERIFY:-0}" = "1" ]; then
+                cmd_verify
+        fi
 
         rm -rf "$BINPKGS"
         mkdir -p "$BINPKGS"
@@ -96,15 +164,156 @@ cmd_list() {
         media_packages
 }
 
+cmd_lock() {
+        mode="${1:-show}"
+        if [ "$mode" != "--update" ]; then
+                printf '%-20s %-12s %s\n' "component" "tag" "rev"
+                for comp in $(lock_components); do
+                        tag=$(lock_get "$comp" tag)
+                        rev=$(lock_get "$comp" rev)
+                        printf '%-20s %-12s %s\n' "$comp" "${tag:-untagged}" "$rev"
+                done
+                return 0
+        fi
+
+        [ -f "$LOCKFILE" ] || die "missing components.lock"
+        tmp="$LOCKFILE.tmp"
+
+        {
+                echo "# LeopardOS release lock: component repositories and the"
+                echo "# exact commits a release uses.  tag is human-readable; rev is"
+                echo "# authoritative.  Refresh with: ./leopard-src lock --update"
+                echo "#"
+                echo "# Format:"
+                echo "#   [component]"
+                echo "#   repo = \"git@github.com:leopard-project/<name>.git\""
+                echo "#   path = \"../<name>\""
+                echo "#   tag  = \"<exact tag, empty if untagged>\""
+                echo "#   rev  = \"<commit>\""
+
+                for comp in $(lock_components); do
+                        path=$(lock_get "$comp" path)
+                        [ -n "$path" ] || path="../$comp"
+                        repo=$(lock_get "$comp" repo)
+                        dir="$ROOT/$path"
+                        [ -d "$dir/.git" ] || die "$comp: no git repository at $dir"
+
+                        rev=$(git -C "$dir" rev-parse HEAD)
+                        tag=$(git -C "$dir" describe --tags --exact-match HEAD 2>/dev/null || true)
+
+                        echo
+                        echo "[$comp]"
+                        echo "repo = \"$repo\""
+                        echo "path = \"$path\""
+                        echo "tag = \"$tag\""
+                        echo "rev = \"$rev\""
+
+                        [ -n "$tag" ] || warn "$comp: HEAD has no exact tag"
+                done
+        } > "$tmp"
+        mv "$tmp" "$LOCKFILE"
+        echo "updated $LOCKFILE"
+}
+
+cmd_verify() {
+        release=0
+        [ "${1:-}" = "--release" ] && release=1
+
+        fail=0
+        warned=0
+
+        for comp in $(lock_components); do
+                path=$(lock_get "$comp" path)
+                [ -n "$path" ] || path="../$comp"
+                dir="$ROOT/$path"
+                rev=$(lock_get "$comp" rev)
+                tag=$(lock_get "$comp" tag)
+
+                if [ ! -d "$dir/.git" ]; then
+                        echo "FAIL $comp: no git repository at $dir"
+                        fail=1
+                        continue
+                fi
+
+                if [ -z "$rev" ] || ! git -C "$dir" cat-file -e "$rev^{commit}" 2>/dev/null; then
+                        echo "FAIL $comp: commit not found: ${rev:-<empty>}"
+                        fail=1
+                        continue
+                fi
+
+                head_rev=$(git -C "$dir" rev-parse HEAD 2>/dev/null || true)
+                if [ "$head_rev" != "$rev" ]; then
+                        echo "WARN $comp: HEAD $head_rev != lock $rev"
+                        warned=1
+                fi
+
+                if [ -n "$tag" ]; then
+                        tag_rev=$(git -C "$dir" rev-parse "$tag^{commit}" 2>/dev/null || true)
+                        if [ "$tag_rev" != "$rev" ]; then
+                                echo "FAIL $comp: tag $tag -> ${tag_rev:-missing}, lock rev $rev"
+                                fail=1
+                        fi
+                elif [ "$release" -eq 1 ]; then
+                        echo "FAIL $comp: untagged (release requires an exact tag)"
+                        fail=1
+                else
+                        echo "WARN $comp: untagged"
+                        warned=1
+                fi
+
+                if [ -n "$(git -C "$dir" status --porcelain 2>/dev/null)" ]; then
+                        echo "WARN $comp: working tree is dirty"
+                        warned=1
+                fi
+        done
+
+        for pkg in $(media_packages); do
+                srcdir=$(pkg_source_dir "$pkg")
+                if [ -z "$srcdir" ]; then
+                        echo "FAIL $pkg: no sources.conf entry"
+                        fail=1
+                        continue
+                fi
+                if [ -d "$BINPKGS" ]; then
+                        n=0
+                        for f in "$BINPKGS/$pkg"-*.xbps; do
+                                [ -f "$f" ] && n=$((n + 1))
+                        done
+                        if [ "$n" -ne 1 ]; then
+                                echo "FAIL $pkg: expected 1 package in binpkgs, found $n"
+                                fail=1
+                        fi
+                else
+                        echo "WARN $pkg: binpkgs not built yet"
+                        warned=1
+                fi
+        done
+
+        if [ "$fail" -ne 0 ]; then
+                echo "verify: FAILED"
+                return 1
+        fi
+        if [ "$warned" -ne 0 ]; then
+                echo "verify: passed with warnings"
+        else
+                echo "verify: OK"
+        fi
+        return 0
+}
+
 cmd_clean() {
         rm -rf "$HOSTDIR"
         echo "removed $HOSTDIR"
 }
 
 case "${1:-}" in
-        sync)  cmd_sync ;;
-        repo)  cmd_repo ;;
-        list)  cmd_list ;;
-        clean) cmd_clean ;;
-        *)     die "usage: $0 sync|repo|list|clean" ;;
+        sync)   cmd_sync ;;
+        repo)   cmd_repo ;;
+        list)   cmd_list ;;
+        lock)   shift; cmd_lock "$@" ;;
+        verify) shift; cmd_verify "$@" ;;
+        clean)  cmd_clean ;;
+        *)
+                die "usage: $0 sync|repo|list|lock [--update]|verify [--release]|clean"
+                ;;
 esac
