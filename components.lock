@@ -19,7 +19,7 @@ rev = "2665e0d982b761e59f6f00707ad6e29708885d98"
 repo = "git@github.com:leopard-project/OpenXSKernel.git"
 path = "../OpenXSKernel"
 tag = ""
-rev = "27647f682dbe7d59d09b250856e6ed75950a1a46"
+rev = "a684aa1b89833b7fbe6d9a1067ca608ec581981e"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
