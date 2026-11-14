@@ -6,6 +6,7 @@ OpenXSKernel
 leopard-base
 leopard-rc
 leopard-getty
+leopard-conhost
 leopard-oobe
 leopard-shell
 leopard-mountd

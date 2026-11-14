@@ -37,7 +37,13 @@ rev = "293f269fa9321bf0da784cd88c990da4f38edf38"
 repo = "git@github.com:leopard-project/leopard-getty.git"
 path = "../leopard-getty"
 tag = ""
-rev = "f89911d3fcad568e6a2fefe579f624efa8955e22"
+rev = "111a3cec18964f36322282b5e8049bb6a8499907"
+
+[leopard-conhost]
+repo = "git@github.com:leopard-project/leopard-conhost.git"
+path = "../leopard-conhost"
+tag = ""
+rev = "7785cea5f414118355cb6b71034530319df6f45f"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
@@ -73,7 +79,7 @@ rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 repo = "git@github.com:leopard-project/leopard-installer.git"
 path = "../leopard-installer"
 tag = ""
-rev = "4ab65d65f389f983c5ddb790a355bc7a53ed2f60"
+rev = "5ca314179abcc2a8a903ff7801f9e0daf26c37fe"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
