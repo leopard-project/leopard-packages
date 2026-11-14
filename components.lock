@@ -37,13 +37,13 @@ rev = "c1495847485a92603813f94fda5d9a6a8c339342"
 repo = "git@github.com:leopard-project/leopard-getty.git"
 path = "../leopard-getty"
 tag = ""
-rev = "111a3cec18964f36322282b5e8049bb6a8499907"
+rev = "aa383a07d6ad659dad1e1fc31b15512cc9ab3447"
 
 [leopard-conhost]
 repo = "git@github.com:leopard-project/leopard-conhost.git"
 path = "../leopard-conhost"
 tag = ""
-rev = "7785cea5f414118355cb6b71034530319df6f45f"
+rev = "b8f03069424bcc0b0327a688e4b946f291b2b104"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
