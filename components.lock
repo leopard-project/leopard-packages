@@ -49,7 +49,7 @@ rev = "20b8d123c87e1fa9d4837ef86ca0d90bace7c136"
 repo = "git@github.com:leopard-project/leopard-shell.git"
 path = "../leopard-shell"
 tag = ""
-rev = "6daa23c542606f4e0f08c5b70068b558ac7c7dcc"
+rev = "84edff90f63a96cbc1cd898e8f0d5b22d4b49304"
 
 [leopard-mountd]
 repo = "git@github.com:leopard-project/leopard-mountd.git"
