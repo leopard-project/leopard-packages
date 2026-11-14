@@ -19,7 +19,7 @@ rev = "2665e0d982b761e59f6f00707ad6e29708885d98"
 repo = "git@github.com:leopard-project/OpenXSKernel.git"
 path = "../OpenXSKernel"
 tag = ""
-rev = "6cdd4c7ed604c8b152e4318e50c1b0e0fd10a2c8"
+rev = "9ae66d410784ea99f5a7a94bdbfde259a06d72dd"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
@@ -37,7 +37,7 @@ rev = "293f269fa9321bf0da784cd88c990da4f38edf38"
 repo = "git@github.com:leopard-project/leopard-getty.git"
 path = "../leopard-getty"
 tag = ""
-rev = "6539a8e733180edbe16c21e3acfc5443afda400a"
+rev = "f89911d3fcad568e6a2fefe579f624efa8955e22"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
