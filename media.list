@@ -1,0 +1,17 @@
+# Packages placed in the installer's /media repository.
+# PE-only packages (leopard-installer, xbps-create, xbps-rindex) must NOT be listed here.
+# One package name per line; versions are resolved from sources.conf.
+OpenXSBoot
+OpenXSKernel
+leopard-base
+leopard-rc
+leopard-getty
+leopard-oobe
+leopard-shell
+leopard-mountd
+leopard-utils
+leopard-coreutils
+xbps
+e1000-kmod
+netserver-kmod
+xhci-kmod

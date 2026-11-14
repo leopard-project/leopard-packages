@@ -1,0 +1,56 @@
+# LeopardOS release lock: component repositories and the commits a release uses.
+# `leopard-src sync` currently reads component out/ directories; this file is
+# the intended source of truth once fetch/build is wired.
+#
+# Format:
+#   [component]
+#   repo = "git@github.com:leopard-project/<name>.git"
+#   rev  = "<commit>"
+
+[OpenXSBoot]
+repo = "git@github.com:leopard-project/OpenXSBoot.git"
+rev  = "2665e0d"
+
+[OpenXSKernel]
+repo = "git@github.com:leopard-project/OpenXSKernel.git"
+rev  = "7a190ce"
+
+[leopard-base]
+repo = "git@github.com:leopard-project/leopard-base.git"
+rev  = "540f452"
+
+[leopard-rc]
+repo = "git@github.com:leopard-project/leopard-rc.git"
+rev  = "293f269"
+
+[leopard-getty]
+repo = "git@github.com:leopard-project/leopard-getty.git"
+rev  = "fabb199"
+
+[leopard-oobe]
+repo = "git@github.com:leopard-project/leopard-oobe.git"
+rev  = "20b8d12"
+
+[leopard-shell]
+repo = "git@github.com:leopard-project/leopard-shell.git"
+rev  = "6daa23c"
+
+[leopard-mountd]
+repo = "git@github.com:leopard-project/leopard-mountd.git"
+rev  = "53d4527"
+
+[leopard-utils]
+repo = "git@github.com:leopard-project/leopard-utils.git"
+rev  = "9da9c26"
+
+[leopard-coreutils]
+repo = "git@github.com:leopard-project/leopard-coreutils.git"
+rev  = "a084763"
+
+[leopard-installer]
+repo = "git@github.com:leopard-project/leopard-installer.git"
+rev  = "4ab65d6"
+
+[leopard-xbps]
+repo = "git@github.com:leopard-project/leopard-xbps.git"
+rev  = "6bb39cc"

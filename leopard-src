@@ -1,0 +1,110 @@
+#!/bin/sh
+# leopard-src — LeopardOS source-package/repository helper.
+#
+# Transitional model (until srcpkgs/<name>/template builds are wired):
+#   sync   rebuild hostdir/binpkgs from explicit component outputs
+#   repo   regenerate/clean the xbps repository index
+#   list   show media.list packages
+#   clean  remove hostdir
+#
+# The important invariant: /media is built only from media.list, never by
+# scanning every sibling repository's out/ directory.
+set -eu
+
+ROOT=$(cd "$(dirname "$0")" && pwd)
+PROJ=$(cd "$ROOT/.." && pwd)
+HOSTDIR="${LEOPARD_HOSTDIR:-$ROOT/hostdir}"
+BINPKGS="$HOSTDIR/binpkgs"
+MEDIA_LIST="$ROOT/media.list"
+SOURCES="$ROOT/sources.conf"
+RINDEX="${XBPS_RINDEX:-$PROJ/leopard-xbps/out/xbps-rindex}"
+
+die() {
+        echo "leopard-src: $*" >&2
+        exit 1
+}
+
+source_dir() {
+        pkg=$1
+        dir=$(awk -v p="$pkg" '$1 == p { print $2; exit }' "$SOURCES")
+        [ -n "$dir" ] || die "no sources.conf entry for $pkg"
+        echo "$PROJ/$dir"
+}
+
+media_packages() {
+        sed -e 's/#.*$//' -e 's/[[:space:]]*$//' "$MEDIA_LIST" | grep -v '^$' || true
+}
+
+cmd_sync() {
+        [ -x "$RINDEX" ] || die "missing xbps-rindex: $RINDEX"
+        [ -f "$MEDIA_LIST" ] || die "missing media.list"
+        [ -f "$SOURCES" ] || die "missing sources.conf"
+
+        rm -rf "$BINPKGS"
+        mkdir -p "$BINPKGS"
+
+        count=0
+        for pkg in $(media_packages); do
+                dir=$(source_dir "$pkg")
+
+                newest=""
+                for candidate in "$dir/$pkg"-*.xbps; do
+                        [ -f "$candidate" ] || continue
+                        if [ -z "$newest" ] || [ "$candidate" -nt "$newest" ]; then
+                                newest=$candidate
+                        fi
+                done
+                [ -n "$newest" ] || die "no .xbps for $pkg in $dir"
+
+                cp "$newest" "$BINPKGS/"
+                count=$((count + 1))
+        done
+
+        [ "$count" -gt 0 ] || die "media.list is empty"
+        if ! "$RINDEX" --compression gzip -a "$BINPKGS"/*.xbps >/dev/null 2>&1; then
+                die "xbps-rindex -a failed"
+        fi
+        "$RINDEX" -c "$BINPKGS" >/dev/null 2>&1 || true
+        "$RINDEX" -r "$BINPKGS" >/dev/null 2>&1 || true
+
+        echo "media repo: $BINPKGS ($count packages)"
+        for f in "$BINPKGS"/*.xbps; do
+                [ -f "$f" ] && echo "  $(basename "$f")"
+        done
+}
+
+cmd_repo() {
+        [ -x "$RINDEX" ] || die "missing xbps-rindex: $RINDEX"
+        [ -d "$BINPKGS" ] || die "no binpkgs yet; run '$0 sync' first"
+        [ -f "$BINPKGS/x86_64-repodata" ] || cmd_sync
+
+        if ! "$RINDEX" --compression gzip -a "$BINPKGS"/*.xbps >/dev/null 2>&1; then
+                die "xbps-rindex -a failed"
+        fi
+        "$RINDEX" -c "$BINPKGS" >/dev/null 2>&1 || true
+        "$RINDEX" -r "$BINPKGS" >/dev/null 2>&1 || true
+
+        if [ -n "${LEOPARD_SIGN_KEY:-}" ]; then
+                "$RINDEX" --privkey "$LEOPARD_SIGN_KEY" \
+                        --sign --signedby "${LEOPARD_SIGNEDBY:-LeopardOS}" "$BINPKGS"
+                "$RINDEX" --privkey "$LEOPARD_SIGN_KEY" --sign-pkg "$BINPKGS"/*.xbps
+        fi
+        echo "repository index: $BINPKGS/x86_64-repodata"
+}
+
+cmd_list() {
+        media_packages
+}
+
+cmd_clean() {
+        rm -rf "$HOSTDIR"
+        echo "removed $HOSTDIR"
+}
+
+case "${1:-}" in
+        sync)  cmd_sync ;;
+        repo)  cmd_repo ;;
+        list)  cmd_list ;;
+        clean) cmd_clean ;;
+        *)     die "usage: $0 sync|repo|list|clean" ;;
+esac
