@@ -12,56 +12,68 @@
 [OpenXSBoot]
 repo = "git@github.com:leopard-project/OpenXSBoot.git"
 path = "../OpenXSBoot"
-tag = ""
-rev = "2665e0d982b761e59f6f00707ad6e29708885d98"
+tag = "v2.1.1"
+rev = "5f8dd76760053b7fa640ae2c060f00edf0954591"
 
 [OpenXSKernel]
 repo = "git@github.com:leopard-project/OpenXSKernel.git"
 path = "../OpenXSKernel"
-tag = ""
-rev = "9ae66d410784ea99f5a7a94bdbfde259a06d72dd"
+tag = "v2.2.1"
+rev = "fbb7f5251da5c8c7fbcc1c674de1f3828dcb8306"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
 path = "../leopard-base"
-tag = ""
-rev = "540f452dd4173d8a95031b6ca21d5cbc558f1afb"
+tag = "v1.0.2"
+rev = "cbf20f75ed51defc5855444dd6fa9f142b13b512"
 
 [leopard-rc]
 repo = "git@github.com:leopard-project/leopard-rc.git"
 path = "../leopard-rc"
-tag = ""
-rev = "c1495847485a92603813f94fda5d9a6a8c339342"
+tag = "v1.0.4"
+rev = "1c7dc61dce31640d52fd25e1914b1c2dff1c85c4"
 
 [leopard-getty]
 repo = "git@github.com:leopard-project/leopard-getty.git"
 path = "../leopard-getty"
-tag = ""
-rev = "aa383a07d6ad659dad1e1fc31b15512cc9ab3447"
+tag = "v1.0.5"
+rev = "5852582624d214c2765e5d7c97e7835eed761a8f"
 
 [leopard-conhost]
 repo = "git@github.com:leopard-project/leopard-conhost.git"
 path = "../leopard-conhost"
-tag = ""
-rev = "b8f03069424bcc0b0327a688e4b946f291b2b104"
+tag = "v1.0.3"
+rev = "9d72ede9d379180c300eb9e73e23192b405eb28a"
+
+[leopard-doas]
+repo = "git@github.com:leopard-project/leopard-doas.git"
+path = "../leopard-doas"
+tag = "v1.0.1"
+rev = "48094a3ca8d9826a2093327484e7c762dd7c3627"
+
+[leopard-ime]
+repo = "git@gitee.com:leopard-project/leopard-ime.git"
+path = "../leopard-ime"
+tag = "v1.1.0"
+rev = "522dc1a151c54822796dbfb18740f774b7cf7649"
 
 [leopard-oobe]
 repo = "git@github.com:leopard-project/leopard-oobe.git"
 path = "../leopard-oobe"
-tag = ""
-rev = "20b8d123c87e1fa9d4837ef86ca0d90bace7c136"
+tag = "v1.0.1"
+rev = "eae7e00ac14812c13609f585766fb34a02012fa4"
 
 [leopard-shell]
 repo = "git@github.com:leopard-project/leopard-shell.git"
 path = "../leopard-shell"
-tag = ""
-rev = "84edff90f63a96cbc1cd898e8f0d5b22d4b49304"
+tag = "v1.0.3"
+rev = "78a0a399fa5b8742fb5cb7f665b9ac5473bfe85c"
 
 [leopard-mountd]
 repo = "git@github.com:leopard-project/leopard-mountd.git"
 path = "../leopard-mountd"
-tag = ""
-rev = "53d45274d05348a32ba38cc24f48d57f8c981ffc"
+tag = "v1.0.1"
+rev = "a7d89f0f1fb65c345790c5ee980445eabe655055"
 
 [leopard-utils]
 repo = "git@github.com:leopard-project/leopard-utils.git"
@@ -78,8 +90,8 @@ rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 [leopard-installer]
 repo = "git@github.com:leopard-project/leopard-installer.git"
 path = "../leopard-installer"
-tag = ""
-rev = "5ca314179abcc2a8a903ff7801f9e0daf26c37fe"
+tag = "v1.4.0"
+rev = "32174e79cf4eaca374e63112f5ca408781164f36"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
