@@ -13,13 +13,13 @@
 repo = "git@github.com:leopard-project/leopard-boot.git"
 path = "../leopard-boot"
 tag = "v2.1.1_2"
-rev = "5f8dd76760053b7fa640ae2c060f00edf0954591"
+rev = "b1ad4e52f079b65d03f7ffc7c47f011f79da345b"
 
 [leopard-xsk]
 repo = "git@github.com:leopard-project/leopard-xsk.git"
 path = "../leopard-xsk"
 tag = "v2.2.1_1"
-rev = "e8d7f1348caf43cd1a273008bc6a03553da1e225"
+rev = "effb89fc1fcdf6f6bded7d26acb211b81a7f5f3c"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
@@ -91,7 +91,7 @@ rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 repo = "git@github.com:leopard-project/leopard-installer.git"
 path = "../leopard-installer"
 tag = "v1.6.0"
-rev = "2105b2093e45b424a0fa4762e4c60d3a3e518936"
+rev = "8cdd3ecc174cb9c1bc4f8d22cdfeb22f8f96d444"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
