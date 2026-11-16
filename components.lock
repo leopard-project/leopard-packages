@@ -42,8 +42,8 @@ rev = "5852582624d214c2765e5d7c97e7835eed761a8f"
 [leopard-conhost]
 repo = "git@github.com:leopard-project/leopard-conhost.git"
 path = "../leopard-conhost"
-tag = "v1.0.3"
-rev = "9d72ede9d379180c300eb9e73e23192b405eb28a"
+tag = "v1.0.5"
+rev = "0ba07ca434075215e286721d4f407c4f5a920937"
 
 [leopard-doas]
 repo = "git@github.com:leopard-project/leopard-doas.git"
@@ -90,8 +90,8 @@ rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 [leopard-installer]
 repo = "git@github.com:leopard-project/leopard-installer.git"
 path = "../leopard-installer"
-tag = "v1.4.0"
-rev = "32174e79cf4eaca374e63112f5ca408781164f36"
+tag = "v1.5.1"
+rev = "a120748f8ebed518440c979d698d6a95c9955b54"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
