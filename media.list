@@ -1,8 +1,8 @@
 # Packages placed in the installer's /media repository.
 # PE-only packages (leopard-installer, xbps-create, xbps-rindex) must NOT be listed here.
 # One package name per line; versions are resolved from sources.conf.
-OpenXSBoot
-OpenXSKernel
+leopard-boot
+leopard-xsk
 leopard-base
 leopard-rc
 leopard-getty

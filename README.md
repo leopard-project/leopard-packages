@@ -33,9 +33,9 @@ LeopardOS 的**源包 / 本地二进制仓库层**。参考 Void 的 `void-packa
 
 ```
 leopard-project/
-├── OpenXSKernel/          # 组件（上游）
-├── OpenXSBoot/
-├── XJ380-SDK/
+├── leopard-xsk/          # 组件（上游）
+├── leopard-boot/
+├── leopard-sdk/
 ├── XXCC-suite/
 ├── leopard-base/
 ├── leopard-rc/
@@ -119,7 +119,7 @@ mkdir -p ~/Projects/leopard-project
 cd ~/Projects/leopard-project
 
 for r in \
-  OpenXSBoot OpenXSKernel XJ380-SDK XXCC-suite \
+  leopard-boot leopard-xsk leopard-sdk XXCC-suite \
   leopard-base leopard-rc leopard-getty leopard-oobe \
   leopard-shell leopard-mountd leopard-utils leopard-coreutils \
   leopard-xbps leopard-installer leopard-packages leopard-os
@@ -128,10 +128,10 @@ do
 done
 ```
 
-`XJ380-SDK` 有第三方 submodule：
+`leopard-sdk` 有第三方 submodule：
 
 ```sh
-cd XJ380-SDK
+cd leopard-sdk
 git submodule update --init --recursive
 ```
 
@@ -156,7 +156,7 @@ sh img-tools/build_all.sh
 
 它会：
 
-1. 构建 `XJ380-SDK` + CRT，并打 `xact-crt` 包；
+1. 构建 `leopard-sdk` + CRT，并打 `xact-crt` 包；
 2. 按 `img-tools/packages.conf` 打包内核、引导、用户态组件；
 3. 构建树内 kmod（`e1000-kmod`、`netserver-kmod`、`xhci-kmod`）；
 4. 构建 `leopard-installer`（只进 PE，不装进目标系统）。
@@ -166,7 +166,7 @@ sh img-tools/build_all.sh
 只构建单个组件：
 
 ```sh
-cd OpenXSKernel
+cd leopard-xsk
 python3 tools/gen_ninja.py
 ninja
 ninja pack          # 内核包
@@ -291,7 +291,7 @@ img-tools/XJ380.vmdk
 ### 5.3 更新组件
 
 ```sh
-cd ../OpenXSKernel
+cd ../leopard-xsk
 ninja pack
 cd ../leopard-packages
 ./leopard-src sync
@@ -351,9 +351,9 @@ xbps-pkgdb -a
 `components.lock`：
 
 ```toml
-[OpenXSKernel]
-repo = "git@github.com:leopard-project/OpenXSKernel.git"
-path = "../OpenXSKernel"
+[leopard-xsk]
+repo = "git@github.com:leopard-project/leopard-xsk.git"
+path = "../leopard-xsk"
 tag = "v2.1.0"
 rev = "7a190ce2a452ab0164fd7a05e57a3b6bef7f026f"
 ```
@@ -368,21 +368,21 @@ rev = "7a190ce2a452ab0164fd7a05e57a3b6bef7f026f"
 组件打 tag：
 
 ```sh
-git -C ../OpenXSKernel tag -s v2.1.0 -m "OpenXSKernel 2.1.0"
-git -C ../OpenXSBoot   tag -s v2.1.0 -m "OpenXSBoot 2.1.0"
+git -C ../leopard-xsk tag -s v2.1.0 -m "leopard-xsk 2.1.0"
+git -C ../leopard-boot   tag -s v2.1.0 -m "leopard-boot 2.1.0"
 ```
 
 `-s` 是 GPG 签名 tag；没有配置 GPG 时用 annotated tag：
 
 ```sh
-git -C ../OpenXSKernel tag -a v2.1.0 -m "OpenXSKernel 2.1.0"
+git -C ../leopard-xsk tag -a v2.1.0 -m "leopard-xsk 2.1.0"
 ```
 
 打完推送到远端：
 
 ```sh
-git -C ../OpenXSKernel push origin v2.1.0
-git -C ../OpenXSBoot   push origin v2.1.0
+git -C ../leopard-xsk push origin v2.1.0
+git -C ../leopard-boot   push origin v2.1.0
 ```
 
 刷新 lock：
@@ -499,8 +499,8 @@ cat leopard-repo-YYYYMMDD.tar.gz.part-* > leopard-repo.tar.gz
 
 ```sh
 # 1. 组件发版
-git -C ../OpenXSKernel tag -s v2.1.0 -m "OpenXSKernel 2.1.0"
-git -C ../OpenXSBoot   tag -s v2.1.0 -m "OpenXSBoot 2.1.0"
+git -C ../leopard-xsk tag -s v2.1.0 -m "leopard-xsk 2.1.0"
+git -C ../leopard-boot   tag -s v2.1.0 -m "leopard-boot 2.1.0"
 # ... 其余组件
 
 # 2. 构建所有包

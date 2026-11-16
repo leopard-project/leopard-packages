@@ -9,17 +9,17 @@
 #   tag  = "<exact tag, empty if untagged>"
 #   rev  = "<commit>"
 
-[OpenXSBoot]
-repo = "git@github.com:leopard-project/OpenXSBoot.git"
-path = "../OpenXSBoot"
-tag = "v2.1.1"
+[leopard-boot]
+repo = "git@github.com:leopard-project/leopard-boot.git"
+path = "../leopard-boot"
+tag = "v2.1.1_2"
 rev = "5f8dd76760053b7fa640ae2c060f00edf0954591"
 
-[OpenXSKernel]
-repo = "git@github.com:leopard-project/OpenXSKernel.git"
-path = "../OpenXSKernel"
-tag = "v2.2.1"
-rev = "fbb7f5251da5c8c7fbcc1c674de1f3828dcb8306"
+[leopard-xsk]
+repo = "git@github.com:leopard-project/leopard-xsk.git"
+path = "../leopard-xsk"
+tag = "v2.2.1_1"
+rev = "e8d7f1348caf43cd1a273008bc6a03553da1e225"
 
 [leopard-base]
 repo = "git@github.com:leopard-project/leopard-base.git"
