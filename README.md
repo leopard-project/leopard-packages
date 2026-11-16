@@ -33,9 +33,9 @@ LeopardOS 的**源包 / 本地二进制仓库层**。参考 Void 的 `void-packa
 
 ```
 leopard-project/
-├── leopard-xsk/          # 组件（上游）
-├── leopard-boot/
-├── leopard-sdk/
+├── leopard-xsk/          # 独立内核组件
+├── leopard-boot/         # 独立 UEFI 引导
+├── leopard-sdk/          # 独立 SDK / XACT CRT
 ├── XXCC-suite/
 ├── leopard-base/
 ├── leopard-rc/
