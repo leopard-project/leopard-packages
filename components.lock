@@ -90,8 +90,8 @@ rev = "a084763dcc1f7b22b7c9ca092581f225c62cca55"
 [leopard-installer]
 repo = "git@github.com:leopard-project/leopard-installer.git"
 path = "../leopard-installer"
-tag = "v1.5.1"
-rev = "a120748f8ebed518440c979d698d6a95c9955b54"
+tag = "v1.6.0"
+rev = "e1ea501099b4b020cc3bc285aad30a1f574b8962"
 
 [leopard-xbps]
 repo = "git@github.com:leopard-project/leopard-xbps.git"
